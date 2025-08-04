@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chúc mừng sinh nhật Bún</title>
+  <style>
+    body {
+  margin: 0;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #ff6699, #330033);
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  display: flex;
+  justify-content: center; /* canh ngang */
+  align-items: center;     /* canh dọc */
+  height: 100vh;           /* full chiều cao màn hình */
+  flex-direction: column;
+}
+
+.line {
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+        margin: 5px 0;
+    }
+    .line.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+h1 {
+  font-size: clamp(1.5rem, 5vw, 2.5rem); /* tự co dãn theo màn hình */
+  color: #fff;
+  text-shadow: 0 0 10px #ff99cc, 0 0 20px #ff6699, 0 0 30px #ff3366;
+  animation: glow 2s ease-in-out infinite alternate;
+  z-index: 2;
+  margin: 0;
+  text-align: center;
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 10px #ff99cc, 0 0 20px #ff6699, 0 0 30px #ff3366;
+  }
+  to {
+    text-shadow: 0 0 20px #ff99cc, 0 0 30px #ff6699, 0 0 40px #ff3366, 0 0 50px #ff0033;
+  }
+}
+
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 10px #ff99cc, 0 0 20px #ff6699, 0 0 30px #ff3366;
+      }
+      to {
+        text-shadow: 0 0 20px #ff99cc, 0 0 30px #ff6699, 0 0 40px #ff3366, 0 0 50px #ff0033;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>🎉 Chúc mừng sinh nhật Bún 🎂</h1>
+  <h1 id="text-container">
+        <h1 class="line">Em bé của a ơiiiii. Sang tuổi mới r nè</h1>
+        <h1 class="line">Thêm một tuổi thêm nhiều niềm vui, nhiều hạnh phúc nha e bé.</h1>
+        <h1 class="line">A sẽ luôn ở cạnh e bé. E hãy tự tin làm những điều mình muốn, đi tới những nơi mình muốn đi và ăng thật nhiều món ăng ngong.</h1>
+        <h1 class="line">A yêu e nhiều lắm ạ.</h1>
+        <h1 class="line"> Cuối cùng thì tuổi mới a chúc chúng mình hạnh phúc bên nhau lâu thật là lâu ạ. Chụt e xinh của a</h1>
+    </h1>
+
+  <!-- Thư viện Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <script>
+    const lines = document.querySelectorAll(".line");
+
+    lines.forEach((line, index) => {
+        setTimeout(() => {
+            line.classList.add("show");
+        }, index * 800); // mỗi dòng cách nhau 0.8 giây
+    });
+</script>
+  <script>
+    let scene = new THREE.Scene();
+    let camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    let renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Tạo hình trái tim 3D
+    let x = 0, y = 0;
+    let heartShape = new THREE.Shape();
+    heartShape.moveTo(x + 0, y + 0);
+    heartShape.bezierCurveTo(x + 0, y + 0, x - 0.25, y + 0.25, x - 0.5, y + 0.75);
+    heartShape.bezierCurveTo(x - 1, y + 1.5, x - 0.5, y + 2, x, y + 1.5);
+    heartShape.bezierCurveTo(x + 0.5, y + 2, x + 1, y + 1.5, x + 0.5, y + 0.75);
+    heartShape.bezierCurveTo(x + 0.25, y + 0.25, x + 0, y + 0, x + 0, y + 0);
+
+    let extrudeSettings = { depth: 0.5, bevelEnabled: true, bevelSegments: 5, steps: 2, bevelSize: 0.1, bevelThickness: 0.1 };
+    let geometry = new THREE.ExtrudeGeometry(heartShape, extrudeSettings);
+    let material = new THREE.MeshPhongMaterial({ color: 0xff3366, shininess: 100 });
+    let heart = new THREE.Mesh(geometry, material);
+    scene.add(heart);
+
+    // Ánh sáng
+    let light1 = new THREE.PointLight(0xffffff, 1);
+    light1.position.set(5, 5, 5);
+    scene.add(light1);
+    let light2 = new THREE.AmbientLight(0xff6699, 0.6);
+    scene.add(light2);
+
+    camera.position.z = 5;
+
+    // Animation trái tim đập
+    let clock = new THREE.Clock();
+    function animate() {
+      requestAnimationFrame(animate);
+      let scale = 1 + 0.1 * Math.sin(clock.getElapsedTime() * 5); // đập nhanh
+      heart.scale.set(scale, scale, scale);
+      heart.rotation.y += 0.01;
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // Responsive
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth/window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>
